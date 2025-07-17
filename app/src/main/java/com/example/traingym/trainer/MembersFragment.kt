@@ -2,6 +2,9 @@ package com.example.traingym.trainer
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -37,6 +40,7 @@ class MembersFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
     }
@@ -60,6 +64,22 @@ class MembersFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         fetchMembers()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.members_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_view_suspended -> {
+                // Shows a Toast message instead of navigating
+                Toast.makeText(context, "Suspended User option clicked", Toast.LENGTH_SHORT).show()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun setupRecyclerView() {
