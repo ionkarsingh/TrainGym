@@ -64,7 +64,7 @@ class MembersFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        membersAdapter = MembersAdapter(membersList, onItemClick = { member ->
+        membersAdapter = MembersAdapter(membersList, onEditClick = { member ->
             showEditMemberDialog(member)
         })
         membersRecyclerView.apply {
@@ -101,7 +101,6 @@ class MembersFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     showLoading(false)
                     Toast.makeText(context, "Error fetching members: ${e.message}", Toast.LENGTH_LONG).show()
-                    e.printStackTrace()
                 }
             }
         }
@@ -199,17 +198,15 @@ class MembersFragment : Fragment() {
     }
 
     private fun showEditMemberDialog(member: Member) {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_member, null)
-        val usernameEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_username)
-        val emailEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_email)
-        val startTimeEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_start_time)
-        val endTimeEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_end_time)
-        val saveButton = dialogView.findViewById<Button>(R.id.button_save_member)
-        val closeButton = dialogView.findViewById<ImageView>(R.id.image_view_close_dialog)
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_member, null)
+
+        val usernameEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_edit_username)
+        val startTimeEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_edit_start_time)
+        val endTimeEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_edit_end_time)
+        val saveButton = dialogView.findViewById<Button>(R.id.button_save_edit_member)
+        val closeButton = dialogView.findViewById<ImageView>(R.id.image_view_close_edit_dialog)
 
         usernameEditText.setText(member.username)
-        emailEditText.setText(member.email)
-        emailEditText.isEnabled = false
         startTimeEditText.setText(member.batch_start_time)
         endTimeEditText.setText(member.batch_end_time)
 
@@ -276,7 +273,6 @@ class MembersFragment : Fragment() {
         closeButton.setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
-
     private fun showTimePicker(isStartTime: Boolean = true, onTimeSelected: (Int, Int) -> Unit) {
         val calendar = Calendar.getInstance()
         val picker = MaterialTimePicker.Builder()
