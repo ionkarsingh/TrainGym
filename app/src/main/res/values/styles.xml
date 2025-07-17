@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BottomNavigationView.Active" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="BottomNavigationView.Inactive" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">#ADD8E6</item>
+    </style>
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.Material3.Corner.Small">
+        <item name="cornerFamily">cut</item> <item name="cornerSize">0dp</item>   </style>
+
+    <style name="RoundedTextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.SmallComponent</item>
+    </style>
+
+    <style name="RoundedButton" parent="Widget.Material3.Button">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.SmallComponent</item>
+    </style>
+</resources>

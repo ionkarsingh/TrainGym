@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">HitFit</string>
+    <string name="home_admin_navigation_text">Home</string>
+    <string name="members_admin_navigation_text">Members</string>
+    <string name="exercise_admin_navigation_text">Exercises</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="profile_admin_navigation_text">Profile</string>
+</resources>

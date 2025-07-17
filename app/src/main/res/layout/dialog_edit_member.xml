@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/white"
+    android:layout_margin="24dp"
+    app:strokeWidth="0dp"
+    app:cardCornerRadius="0dp"  > <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        >
+
+        <ImageView
+            android:id="@+id/image_view_close_edit_dialog"
+            android:layout_width="36dp" android:layout_height="36dp" android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Close dialog"
+            app:srcCompat="@drawable/ic_close" app:tint="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="-12dp" android:layout_marginTop="-12dp" android:padding="6dp" />
+
+        <TextView
+            android:id="@+id/dialog_edit_title_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Edit Member"
+            android:textAppearance="?attr/textAppearanceHeadlineSmall"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/image_view_close_edit_dialog"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constrainedWidth="true"
+            />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_edit_username"
+            style="@style/RoundedTextInputLayout" android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Username"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_edit_title_text_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_edit_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/batch_timings_edit_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Batch Timings"
+            android:textAppearance="?attr/textAppearanceTitleSmall"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_edit_username"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_edit_start_time"
+            style="@style/RoundedTextInputLayout" android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Start Time"
+            android:layout_marginBottom="8dp"
+            app:endIconMode="custom"
+            app:endIconDrawable="@drawable/ic_time" app:endIconTint="@color/black"
+            app:layout_constraintTop_toBottomOf="@+id/batch_timings_edit_header"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_edit_start_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="true"
+                android:cursorVisible="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_edit_end_time"
+            style="@style/RoundedTextInputLayout" android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="End Time"
+            android:layout_marginBottom="16dp"
+            app:endIconMode="custom"
+            app:endIconDrawable="@drawable/ic_time"
+            app:endIconTint="@color/black"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_edit_start_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_edit_end_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="true"
+                android:cursorVisible="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/button_save_edit_member"
+            style="@style/RoundedButton" android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Save Changes"
+            android:layout_marginTop="19dp"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_edit_end_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+</com.google.android.material.card.MaterialCardView>

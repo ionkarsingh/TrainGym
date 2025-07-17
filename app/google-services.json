@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "286260757182",
+    "project_id": "traingym-2bf88",
+    "storage_bucket": "traingym-2bf88.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:286260757182:android:5f62193a36a7ac20eb14ef",
+        "android_client_info": {
+          "package_name": "com.example.traingym"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnFMtT3GMf2TKkju7dhvA4s6DSpSwMJ6U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
