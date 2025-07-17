@@ -5,28 +5,36 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.traingym.R
 
 class MembersAdapter(
-    private var members: List<Member>,
-    private val onEditClick: (Member) -> Unit
+    private val onEditClick: (Member) -> Unit,
+    private val onSuspendClick: (Member) -> Unit
 ) : RecyclerView.Adapter<MembersAdapter.MemberViewHolder>() {
+
+    private var members: List<Member> = emptyList()
 
     inner class MemberViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val usernameTextView: TextView = itemView.findViewById(R.id.text_view_username)
         private val emailTextView: TextView = itemView.findViewById(R.id.text_view_email)
         private val batchTimingTextView: TextView = itemView.findViewById(R.id.text_view_batch_timing)
         private val editIcon: ImageView = itemView.findViewById(R.id.image_view_edit)
+        private val suspendIcon: ImageView = itemView.findViewById(R.id.image_view_suspend)
+        private val statusDot: ImageView = itemView.findViewById(R.id.image_view_status_dot)
 
         fun bind(member: Member) {
             usernameTextView.text = member.username
             emailTextView.text = member.email
             batchTimingTextView.text = "${member.batch_start_time} to ${member.batch_end_time}"
-            itemView.setOnClickListener(null)
-            editIcon.setOnClickListener {
-                onEditClick(member)
-            }
+
+            editIcon.setOnClickListener { onEditClick(member) }
+            suspendIcon.setOnClickListener { onSuspendClick(member) }
+
+            statusDot.setColorFilter(ContextCompat.getColor(itemView.context, R.color.green_status))
+            suspendIcon.setImageResource(R.drawable.ic_suspend)
+            suspendIcon.contentDescription = "Suspend Member"
         }
     }
 

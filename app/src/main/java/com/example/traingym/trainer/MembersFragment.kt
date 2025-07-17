@@ -34,7 +34,6 @@ class MembersFragment : Fragment() {
     private lateinit var membersRecyclerView: RecyclerView
     private lateinit var membersAdapter: MembersAdapter
     private lateinit var lottieAnimationView: LottieAnimationView
-    private val membersList: MutableList<Member> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,9 +63,14 @@ class MembersFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        membersAdapter = MembersAdapter(membersList, onEditClick = { member ->
-            showEditMemberDialog(member)
-        })
+        membersAdapter = MembersAdapter(
+            onEditClick = { member ->
+                showEditMemberDialog(member)
+            },
+            onSuspendClick = { member ->
+                suspendMember(member)
+            }
+        )
         membersRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = membersAdapter
@@ -85,6 +89,7 @@ class MembersFragment : Fragment() {
             try {
                 val snapshot = firestore.collection("AppUsers")
                     .whereEqualTo("user_type", "normal_user")
+                    .whereEqualTo("_suspended", false)
                     .get()
                     .await()
 
@@ -94,7 +99,7 @@ class MembersFragment : Fragment() {
                     showLoading(false)
                     membersAdapter.updateMembers(fetchedMembers)
                     if (fetchedMembers.isEmpty()) {
-                        Toast.makeText(context, "No members found.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "No active members found.", Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: Exception) {
@@ -104,6 +109,30 @@ class MembersFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun suspendMember(member: Member) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Suspend Member")
+            .setMessage("Are you sure you want to suspend '${member.username}'? They will be hidden from this list.")
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Suspend") { _, _ ->
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        firestore.collection("AppUsers").document(member.uid)
+                            .update("_suspended", true).await()
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Member suspended.", Toast.LENGTH_SHORT).show()
+                            fetchMembers()
+                        }
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
+            .show()
     }
 
     private fun showAddMemberDialog() {
@@ -174,7 +203,8 @@ class MembersFragment : Fragment() {
                         username = username,
                         email = email,
                         batch_start_time = startTime,
-                        batch_end_time = endTime
+                        batch_end_time = endTime,
+                        is_suspended = false
                     )
 
                     firestore.collection("AppUsers").document(uid).set(newUser).await()
