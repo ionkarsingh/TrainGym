@@ -74,8 +74,10 @@ class MembersFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_view_suspended -> {
-                // Shows a Toast message instead of navigating
-                Toast.makeText(context, "Suspended User option clicked", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, SuspendedMembersFragment()) // IMPORTANT: Replace with your actual FrameLayout ID from your activity
+                    .addToBackStack(null)
+                    .commit()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -134,7 +136,7 @@ class MembersFragment : Fragment() {
     private fun suspendMember(member: Member) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Suspend Member")
-            .setMessage("Are you sure you want to suspend '${member.username}'? They will be hidden from this list.")
+            .setMessage("Are you sure you want to suspend '${member.username}'? They will not be able to use our app.")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Suspend") { _, _ ->
                 lifecycleScope.launch(Dispatchers.IO) {

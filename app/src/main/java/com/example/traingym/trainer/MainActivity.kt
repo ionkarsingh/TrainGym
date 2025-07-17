@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat // This import might become unused
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.example.traingym.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -64,5 +62,10 @@ class MainActivity : AppCompatActivity() {
             .commit()
 
         toolbarTitle.text = title
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }
