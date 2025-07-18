@@ -34,18 +34,13 @@
 
         <TextView
             android:id="@+id/dialog_edit_title_text_view"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Edit Member"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall"
-            android:textColor="?attr/colorOnSurface"
-            android:textStyle="bold"
-            android:layout_marginEnd="8dp"
+            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/image_view_close_edit_dialog"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
             />
 
         <com.google.android.material.textfield.TextInputLayout
