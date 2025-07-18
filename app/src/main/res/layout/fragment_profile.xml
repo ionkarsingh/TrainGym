@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E0E0E0"
     tools:context=".trainer.ProfileFragment">
 
-    <TextView
-        android:id="@+id/fragment_title_text_view"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Hi, my name is Profile Fragment!"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif-medium"
-        />
+        android:text="Logout"
+        app:backgroundTint="@color/blue_700"
+        app:icon="@drawable/ic_logout" />
 
 </FrameLayout>

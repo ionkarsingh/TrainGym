@@ -50,10 +50,6 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-        if (savedInstanceState == null) {
-            bottomNavigationView.selectedItemId = R.id.navigation_home
-            toolbarTitle.text = "Home"
-        }
     }
 
     private fun replaceFragment(fragment: Fragment, title: String) {
