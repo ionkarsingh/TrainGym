@@ -56,4 +56,5 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.airbnb.android:lottie:6.4.1")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }

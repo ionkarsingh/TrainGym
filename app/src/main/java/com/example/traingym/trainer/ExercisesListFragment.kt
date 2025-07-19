@@ -11,8 +11,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.example.traingym.R
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
@@ -25,6 +27,10 @@ class ExercisesListFragment : Fragment() {
     private var categoryId: String? = null
     private var categoryName: String? = null
     private lateinit var firestore: FirebaseFirestore
+
+    private lateinit var exercisesRecyclerView: RecyclerView
+    private lateinit var exerciseAdapter: ExerciseAdapter
+    private lateinit var lottieAnimationView: LottieAnimationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,15 +46,15 @@ class ExercisesListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_exercises_list, container, false)
+
+        exercisesRecyclerView = view.findViewById(R.id.exercises_recycler_view)
+        lottieAnimationView = view.findViewById(R.id.lottie_loading_animation)
         val fab = view.findViewById<FloatingActionButton>(R.id.fab_add_exercise)
-
-        val displayTextView = view.findViewById<TextView>(R.id.text_view_category_id_display)
-        displayTextView.visibility = View.GONE
-
         fab.setOnClickListener {
             showAddExerciseDialog()
         }
 
+        setupRecyclerView()
         return view
     }
 
@@ -57,6 +63,7 @@ class ExercisesListFragment : Fragment() {
         val mainActivity = activity as? AppCompatActivity
         mainActivity?.findViewById<TextView>(R.id.toolbar_title)?.text = categoryName ?: "Exercises"
         mainActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        fetchExercises()
     }
 
     override fun onStop() {
@@ -64,6 +71,38 @@ class ExercisesListFragment : Fragment() {
         val mainActivity = activity as? AppCompatActivity
         mainActivity?.findViewById<TextView>(R.id.toolbar_title)?.text = "Exercise List"
         mainActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    }
+
+    private fun setupRecyclerView() {
+        exerciseAdapter = ExerciseAdapter(emptyList())
+        exercisesRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = exerciseAdapter
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        lottieAnimationView.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun fetchExercises() {
+        showLoading(true)
+        lifecycleScope.launch {
+            try {
+                val snapshot = firestore.collection("Exercises")
+                    .whereEqualTo("category_id", categoryId)
+                    .get().await()
+                val exercises = snapshot.toObjects(Exercise::class.java)
+                exerciseAdapter.updateData(exercises)
+                if (exercises.isEmpty()) {
+                    Toast.makeText(context, "No exercises found in this category.", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            } finally {
+                showLoading(false)
+            }
+        }
     }
 
     private fun showAddExerciseDialog() {
@@ -95,42 +134,26 @@ class ExercisesListFragment : Fragment() {
             val restTime = restEditText.text.toString().trim()
             val targetMuscle = muscleEditText.text.toString().trim()
             val instructions = instructionsEditText.text.toString().trim()
-            if (name.isEmpty()) {
-                nameEditText.error = "Required"
-                return@setOnClickListener
-            }
-            if (sets.isEmpty()) {
-                setsEditText.error = "Required"
-                return@setOnClickListener
-            }
-            if (reps.isEmpty()) {
-                repsEditText.error = "Required"
-                return@setOnClickListener
-            }
-            if (restTime.isEmpty()) {
-                restEditText.error = "Required"
-                return@setOnClickListener
-            }
-            if (targetMuscle.isEmpty()) {
-                muscleEditText.error = "Required"
-                return@setOnClickListener
-            }
-            if (instructions.isEmpty()) {
-                instructionsEditText.error = "Required"
-                return@setOnClickListener
-            }
-            val imageUrls = listOf(
-                url1EditText.text.toString().trim(),
-                url2EditText.text.toString().trim(),
-                url3EditText.text.toString().trim(),
-                url4EditText.text.toString().trim()
+
+            if (name.isEmpty()) { nameEditText.error = "Required"; return@setOnClickListener }
+            if (sets.isEmpty()) { setsEditText.error = "Required"; return@setOnClickListener }
+            if (reps.isEmpty()) { repsEditText.error = "Required"; return@setOnClickListener }
+            if (restTime.isEmpty()) { restEditText.error = "Required"; return@setOnClickListener }
+            if (targetMuscle.isEmpty()) { muscleEditText.error = "Required"; return@setOnClickListener }
+            if (instructions.isEmpty()) { instructionsEditText.error = "Required"; return@setOnClickListener }
+
+            val nonEmptyImageUrls = listOfNotNull(
+                url1EditText.text.toString().trim().takeIf { it.isNotBlank() },
+                url2EditText.text.toString().trim().takeIf { it.isNotBlank() },
+                url3EditText.text.toString().trim().takeIf { it.isNotBlank() },
+                url4EditText.text.toString().trim().takeIf { it.isNotBlank() }
             )
-            val nonEmptyImageUrls = imageUrls.filter { it.isNotBlank() }
 
             if (nonEmptyImageUrls.size < 2) {
                 Toast.makeText(context, "Please provide at least two image URLs.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
+
             val newExerciseRef = firestore.collection("Exercises").document()
 
             val newExercise = hashMapOf(
@@ -150,6 +173,7 @@ class ExercisesListFragment : Fragment() {
                     newExerciseRef.set(newExercise).await()
                     Toast.makeText(context, "Exercise saved successfully!", Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
+                    fetchExercises()
                 } catch (e: Exception) {
                     Toast.makeText(context, "Error saving exercise: ${e.message}", Toast.LENGTH_LONG).show()
                 }

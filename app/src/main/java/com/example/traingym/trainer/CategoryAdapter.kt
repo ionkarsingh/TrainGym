@@ -9,7 +9,7 @@ import com.example.traingym.R
 
 class CategoryAdapter(
     private var categories: List<ExerciseCategory>,
-    private val onItemClick: (ExerciseCategory) -> Unit // Add a click listener
+    private val onItemClick: (ExerciseCategory) -> Unit
 ) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
     class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -24,7 +24,7 @@ class CategoryAdapter(
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val category = categories[position]
-        holder.nameTextView.text = "Category Name: ${category.category_name}"
+        holder.nameTextView.text = "${category.category_name}"
         holder.idTextView.text = "ID: ${category.category_id}"
         holder.itemView.setOnClickListener {
             onItemClick(category)
