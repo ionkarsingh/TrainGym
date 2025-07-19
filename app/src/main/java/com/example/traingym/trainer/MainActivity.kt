@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_exercises -> {
-                    replaceFragment(ExercisesFragment(), "Explore Categories")
+                    replaceFragment(CategoryFragment(), "Explore Categories")
                     true
                 }
                 R.id.navigation_profile -> {

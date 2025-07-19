@@ -20,7 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class ExercisesFragment : Fragment() {
+class CategoryFragment : Fragment() {
 
     private lateinit var firestore: FirebaseFirestore
     private lateinit var categoriesRecyclerView: RecyclerView
@@ -36,7 +36,7 @@ class ExercisesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_exercises, container, false)
+        val view = inflater.inflate(R.layout.fragment_category, container, false)
 
         categoriesRecyclerView = view.findViewById(R.id.categories_recycler_view)
         lottieAnimationView = view.findViewById(R.id.lottie_loading_animation)
@@ -55,7 +55,17 @@ class ExercisesFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        categoryAdapter = CategoryAdapter(emptyList())
+        categoryAdapter = CategoryAdapter(emptyList()) { clickedCategory ->
+            val exerciseListFragment = ExercisesListFragment.newInstance(
+                clickedCategory.category_id,
+                clickedCategory.category_name
+            )
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, exerciseListFragment)
+                .addToBackStack(null)
+                .commit()
+        }
         categoriesRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = categoryAdapter

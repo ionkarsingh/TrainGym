@@ -8,7 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.traingym.R
 
 class CategoryAdapter(
-    private var categories: List<ExerciseCategory>
+    private var categories: List<ExerciseCategory>,
+    private val onItemClick: (ExerciseCategory) -> Unit // Add a click listener
 ) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
     class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -25,6 +26,9 @@ class CategoryAdapter(
         val category = categories[position]
         holder.nameTextView.text = "Category Name: ${category.category_name}"
         holder.idTextView.text = "ID: ${category.category_id}"
+        holder.itemView.setOnClickListener {
+            onItemClick(category)
+        }
     }
 
     override fun getItemCount() = categories.size
