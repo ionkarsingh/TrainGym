@@ -26,7 +26,7 @@ class AdminMainActivity : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_admin_home -> {
-                    replaceFragment(AdminHomeFragment(), "Admin Home")
+                    replaceFragment(AdminHomeFragment(), "Dashboard")
                     true
                 }
                 R.id.navigation_admin_trainers -> {
@@ -34,23 +34,32 @@ class AdminMainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_admin_profile -> {
-                    replaceFragment(AdminProfileFragment(), "Admin Profile")
+                    replaceFragment(AdminProfileFragment(), "Profile")
                     true
                 }
                 else -> false
             }
         }
 
-        // Load the default fragment
         if (savedInstanceState == null) {
             bottomNavigationView.selectedItemId = R.id.navigation_admin_home
         }
     }
 
     private fun replaceFragment(fragment: Fragment, title: String) {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.admin_fragment_container)
+        if (currentFragment?.javaClass == fragment.javaClass) {
+            return
+        }
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.admin_fragment_container, fragment)
             .commit()
         toolbarTitle.text = title
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

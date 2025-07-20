@@ -21,6 +21,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -46,12 +47,6 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this, "Login Failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                     }
                 }
-        }
-    }
-    override fun onStart() {
-        super.onStart()
-        if (auth.currentUser != null) {
-            checkUserRoleAndNavigate()
         }
     }
     private fun checkUserRoleAndNavigate() {
