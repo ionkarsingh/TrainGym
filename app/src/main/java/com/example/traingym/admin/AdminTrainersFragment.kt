@@ -3,6 +3,9 @@ package com.example.traingym.admin
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -33,6 +36,7 @@ class AdminTrainersFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
     }
@@ -50,7 +54,23 @@ class AdminTrainersFragment : Fragment() {
         }
         return view
     }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.admin_trainers_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_view_suspended_trainers -> {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.admin_fragment_container, SuspendedTrainersFragment())
+                    .addToBackStack(null)
+                    .commit()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
     override fun onResume() {
         super.onResume()
         fetchTrainers()
@@ -86,7 +106,6 @@ class AdminTrainersFragment : Fragment() {
                 val trainers = snapshot.toObjects(Trainer::class.java)
                 trainerAdapter.updateData(trainers)
             } catch (e: Exception) {
-                Toast.makeText(context, "Error fetching trainers: ${e.message}", Toast.LENGTH_LONG).show()
             } finally {
                 showLoading(false)
             }
