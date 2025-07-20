@@ -84,7 +84,6 @@ class CategoryFragment : Fragment() {
                 val categories = snapshot.toObjects(ExerciseCategory::class.java)
                 categoryAdapter.updateData(categories)
             } catch (e: Exception) {
-                Toast.makeText(context, "Error fetching categories: ${e.message}", Toast.LENGTH_LONG).show()
             } finally {
                 showLoading(false)
             }
