@@ -10,7 +10,22 @@
         android:id="@+id/trainers_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/item_member" />
+        tools:listitem="@layout/item_trainer" />
+
+    <TextView
+        android:id="@+id/text_view_no_trainers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sorry! No trainers are available at the moment."
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:visibility="gone"
+        android:gravity="center"
+        android:paddingHorizontal="35dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_loading_animation"

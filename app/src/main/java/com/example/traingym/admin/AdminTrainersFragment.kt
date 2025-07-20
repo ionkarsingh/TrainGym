@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -33,6 +34,7 @@ class AdminTrainersFragment : Fragment() {
     private lateinit var trainersRecyclerView: RecyclerView
     private lateinit var trainerAdapter: TrainerAdapter
     private lateinit var lottieAnimationView: LottieAnimationView
+    private lateinit var noTrainersTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +48,7 @@ class AdminTrainersFragment : Fragment() {
         val fab = view.findViewById<FloatingActionButton>(R.id.fab_add_trainer)
         trainersRecyclerView = view.findViewById(R.id.trainers_recycler_view)
         lottieAnimationView = view.findViewById(R.id.lottie_loading_animation)
+        noTrainersTextView = view.findViewById(R.id.text_view_no_trainers)
 
         setupRecyclerView()
 
@@ -97,6 +100,9 @@ class AdminTrainersFragment : Fragment() {
 
     private fun fetchTrainers() {
         showLoading(true)
+        trainersRecyclerView.visibility = View.GONE
+        noTrainersTextView.visibility = View.GONE
+
         lifecycleScope.launch {
             try {
                 val snapshot = firestore.collection("AppUsers")
@@ -104,7 +110,15 @@ class AdminTrainersFragment : Fragment() {
                     .whereEqualTo("_suspended", false)
                     .get().await()
                 val trainers = snapshot.toObjects(Trainer::class.java)
-                trainerAdapter.updateData(trainers)
+
+                if (trainers.isEmpty()) {
+                    noTrainersTextView.visibility = View.VISIBLE
+                    trainersRecyclerView.visibility = View.GONE
+                } else {
+                    noTrainersTextView.visibility = View.GONE
+                    trainersRecyclerView.visibility = View.VISIBLE
+                    trainerAdapter.updateData(trainers)
+                }
             } catch (e: Exception) {
             } finally {
                 showLoading(false)
@@ -183,15 +197,16 @@ class AdminTrainersFragment : Fragment() {
             .setPositiveButton("Save") { _, _ ->
                 val newUsername = usernameEditText.text.toString().trim()
                 if (newUsername.isNotEmpty()) {
-                    firestore.collection("AppUsers").document(trainer.uid)
-                        .update("username", newUsername)
-                        .addOnSuccessListener {
+                    lifecycleScope.launch {
+                        try {
+                            firestore.collection("AppUsers").document(trainer.uid)
+                                .update("username", newUsername).await()
                             Toast.makeText(context, "Username updated!", Toast.LENGTH_SHORT).show()
                             fetchTrainers()
-                        }
-                        .addOnFailureListener { e ->
+                        } catch (e: Exception) {
                             Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                         }
+                    }
                 }
             }
             .show()
@@ -203,15 +218,16 @@ class AdminTrainersFragment : Fragment() {
             .setMessage("Are you sure you want to suspend ${trainer.username}?")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Suspend") { _, _ ->
-                firestore.collection("AppUsers").document(trainer.uid)
-                    .update("_suspended", true)
-                    .addOnSuccessListener {
+                lifecycleScope.launch {
+                    try {
+                        firestore.collection("AppUsers").document(trainer.uid)
+                            .update("_suspended", true).await()
                         Toast.makeText(context, "${trainer.username} has been suspended.", Toast.LENGTH_SHORT).show()
                         fetchTrainers()
-                    }
-                    .addOnFailureListener { e ->
+                    } catch (e: Exception) {
                         Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                     }
+                }
             }
             .show()
     }
