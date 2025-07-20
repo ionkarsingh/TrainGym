@@ -33,7 +33,7 @@
         android:id="@+id/text_view_total_members_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Total Members"
+        android:text="Total App Users"
         android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
         android:textColor="@color/white"
         android:textStyle="bold"

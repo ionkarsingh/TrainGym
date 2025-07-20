@@ -50,9 +50,17 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+        if (savedInstanceState == null) {
+            bottomNavigationView.selectedItemId = R.id.navigation_home
+        }
     }
 
     private fun replaceFragment(fragment: Fragment, title: String) {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+        if (currentFragment?.javaClass == fragment.javaClass) {
+            return
+        }
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()

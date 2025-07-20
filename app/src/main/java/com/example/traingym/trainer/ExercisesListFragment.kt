@@ -31,6 +31,7 @@ class ExercisesListFragment : Fragment() {
     private lateinit var exercisesRecyclerView: RecyclerView
     private lateinit var exerciseAdapter: ExerciseAdapter
     private lateinit var lottieAnimationView: LottieAnimationView
+    private lateinit var noExercisesTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +50,9 @@ class ExercisesListFragment : Fragment() {
 
         exercisesRecyclerView = view.findViewById(R.id.exercises_recycler_view)
         lottieAnimationView = view.findViewById(R.id.lottie_loading_animation)
+        noExercisesTextView = view.findViewById(R.id.text_view_no_exercises)
         val fab = view.findViewById<FloatingActionButton>(R.id.fab_add_exercise)
+
         fab.setOnClickListener {
             showAddExerciseDialog()
         }
@@ -87,18 +90,25 @@ class ExercisesListFragment : Fragment() {
 
     private fun fetchExercises() {
         showLoading(true)
+        exercisesRecyclerView.visibility = View.GONE
+        noExercisesTextView.visibility = View.GONE
+
         lifecycleScope.launch {
             try {
                 val snapshot = firestore.collection("Exercises")
                     .whereEqualTo("category_id", categoryId)
                     .get().await()
                 val exercises = snapshot.toObjects(Exercise::class.java)
-                exerciseAdapter.updateData(exercises)
+
                 if (exercises.isEmpty()) {
-                    Toast.makeText(context, "No exercises found in this category.", Toast.LENGTH_SHORT).show()
+                    noExercisesTextView.visibility = View.VISIBLE
+                    exercisesRecyclerView.visibility = View.GONE
+                } else {
+                    noExercisesTextView.visibility = View.GONE
+                    exercisesRecyclerView.visibility = View.VISIBLE
+                    exerciseAdapter.updateData(exercises)
                 }
             } catch (e: Exception) {
-                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
             } finally {
                 showLoading(false)
             }

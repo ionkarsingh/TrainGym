@@ -15,18 +15,33 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_exercise"/>
 
+    <TextView
+        android:id="@+id/text_view_no_exercises"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sorry! No exercises are available in this category."
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:paddingHorizontal="30dp"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible"/>
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_loading_animation"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        app:lottie_rawRes="@raw/load"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:lottie_rawRes="@raw/load"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_exercise"

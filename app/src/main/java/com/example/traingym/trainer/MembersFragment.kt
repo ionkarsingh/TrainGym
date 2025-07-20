@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -37,6 +38,7 @@ class MembersFragment : Fragment() {
     private lateinit var membersRecyclerView: RecyclerView
     private lateinit var membersAdapter: MembersAdapter
     private lateinit var lottieAnimationView: LottieAnimationView
+    private lateinit var noMembersTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +55,7 @@ class MembersFragment : Fragment() {
 
         membersRecyclerView = view.findViewById(R.id.members_recycler_view)
         lottieAnimationView = view.findViewById(R.id.lottie_loading_animation)
+        noMembersTextView = view.findViewById(R.id.text_view_no_members)
         val fabAddMember = view.findViewById<FloatingActionButton>(R.id.fab_add_member)
 
         setupRecyclerView()
@@ -75,7 +78,7 @@ class MembersFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_view_suspended -> {
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, SuspendedMembersFragment()) // IMPORTANT: Replace with your actual FrameLayout ID from your activity
+                    .replace(R.id.fragment_container, SuspendedMembersFragment())
                     .addToBackStack(null)
                     .commit()
                 true
@@ -101,12 +104,13 @@ class MembersFragment : Fragment() {
 
     private fun showLoading(isLoading: Boolean) {
         lottieAnimationView.visibility = if (isLoading) View.VISIBLE else View.GONE
-        membersRecyclerView.visibility = if (isLoading) View.GONE else View.VISIBLE
-        if (isLoading) lottieAnimationView.playAnimation() else lottieAnimationView.pauseAnimation()
     }
 
     private fun fetchMembers() {
         showLoading(true)
+        membersRecyclerView.visibility = View.GONE
+        noMembersTextView.visibility = View.GONE
+
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val snapshot = firestore.collection("AppUsers")
@@ -118,16 +122,22 @@ class MembersFragment : Fragment() {
                 val fetchedMembers = snapshot.toObjects(Member::class.java)
 
                 withContext(Dispatchers.Main) {
-                    showLoading(false)
-                    membersAdapter.updateMembers(fetchedMembers)
                     if (fetchedMembers.isEmpty()) {
-                        Toast.makeText(context, "No active members found.", Toast.LENGTH_SHORT).show()
+                        noMembersTextView.visibility = View.VISIBLE
+                        membersRecyclerView.visibility = View.GONE
+                    } else {
+                        noMembersTextView.visibility = View.GONE
+                        membersRecyclerView.visibility = View.VISIBLE
+                        membersAdapter.updateMembers(fetchedMembers)
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    showLoading(false)
                     Toast.makeText(context, "Error fetching members: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            } finally {
+                withContext(Dispatchers.Main) {
+                    showLoading(false)
                 }
             }
         }
