@@ -131,6 +131,8 @@ class AdminTrainersFragment : Fragment() {
         val usernameEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_username)
         val emailEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_email)
         val passwordEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_password)
+        val phoneEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_phone)
+        val addressEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_address)
         val saveButton = dialogView.findViewById<Button>(R.id.button_save_trainer)
         val closeButton = dialogView.findViewById<ImageView>(R.id.image_view_close_dialog)
 
@@ -144,6 +146,8 @@ class AdminTrainersFragment : Fragment() {
             val username = usernameEditText.text.toString().trim()
             val email = emailEditText.text.toString().trim()
             val password = passwordEditText.text.toString().trim()
+            val phone = phoneEditText.text.toString().trim()
+            val address = addressEditText.text.toString().trim()
 
             if (username.isEmpty()) {
                 usernameEditText.error = "Username is required"
@@ -155,6 +159,14 @@ class AdminTrainersFragment : Fragment() {
             }
             if (password.length < 6) {
                 passwordEditText.error = "Password must be at least 6 characters"
+                return@setOnClickListener
+            }
+            if (phone.length < 10) {
+                phoneEditText.error = "Phone number must be at least 10 digits"
+                return@setOnClickListener
+            }
+            if (address.isEmpty()) {
+                addressEditText.error = "Address is required"
                 return@setOnClickListener
             }
             lifecycleScope.launch {
@@ -169,7 +181,9 @@ class AdminTrainersFragment : Fragment() {
                             "email" to email,
                             "user_type" to "trainer",
                             "addedDate" to FieldValue.serverTimestamp(),
-                            "_suspended" to false
+                            "_suspended" to false,
+                            "phone" to phone,
+                            "address" to address
                         )
                         firestore.collection("AppUsers").document(uid).set(newTrainer).await()
 
@@ -187,8 +201,13 @@ class AdminTrainersFragment : Fragment() {
 
     private fun showEditTrainerDialog(trainer: Trainer) {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_trainer, null)
-        val usernameEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_trainer_username)
+        val usernameEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_edit_username)
+        val phoneEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_edit_phone)
+        val addressEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_edit_address)
+
         usernameEditText.setText(trainer.username)
+        phoneEditText.setText(trainer.phone)
+        addressEditText.setText(trainer.address)
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Edit Trainer")
@@ -196,17 +215,24 @@ class AdminTrainersFragment : Fragment() {
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Save") { _, _ ->
                 val newUsername = usernameEditText.text.toString().trim()
+                val newPhone = phoneEditText.text.toString().trim()
+                val newAddress = addressEditText.text.toString().trim()
+
                 if (newUsername.isNotEmpty()) {
-                    lifecycleScope.launch {
-                        try {
-                            firestore.collection("AppUsers").document(trainer.uid)
-                                .update("username", newUsername).await()
-                            Toast.makeText(context, "Username updated!", Toast.LENGTH_SHORT).show()
+                    val updates = mapOf(
+                        "username" to newUsername,
+                        "phone" to newPhone,
+                        "address" to newAddress
+                    )
+                    firestore.collection("AppUsers").document(trainer.uid)
+                        .update(updates)
+                        .addOnSuccessListener {
+                            Toast.makeText(context, "Details updated!", Toast.LENGTH_SHORT).show()
                             fetchTrainers()
-                        } catch (e: Exception) {
+                        }
+                        .addOnFailureListener { e ->
                             Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                         }
-                    }
                 }
             }
             .show()
@@ -218,16 +244,15 @@ class AdminTrainersFragment : Fragment() {
             .setMessage("Are you sure you want to suspend ${trainer.username}?")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Suspend") { _, _ ->
-                lifecycleScope.launch {
-                    try {
-                        firestore.collection("AppUsers").document(trainer.uid)
-                            .update("_suspended", true).await()
+                firestore.collection("AppUsers").document(trainer.uid)
+                    .update("_suspended", true)
+                    .addOnSuccessListener {
                         Toast.makeText(context, "${trainer.username} has been suspended.", Toast.LENGTH_SHORT).show()
                         fetchTrainers()
-                    } catch (e: Exception) {
+                    }
+                    .addOnFailureListener { e ->
                         Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                     }
-                }
             }
             .show()
     }

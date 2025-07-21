@@ -61,6 +61,7 @@ class CategoryFragment : Fragment() {
         categoryAdapter = CategoryAdapter(
             emptyList(),
             onItemClick = { clickedCategory ->
+                // This click on the card still goes to the exercises list
                 val exerciseListFragment = ExercisesListFragment.newInstance(
                     clickedCategory.category_id,
                     clickedCategory.category_name
@@ -75,6 +76,10 @@ class CategoryFragment : Fragment() {
             },
             onDeleteClick = {
                 deleteCategory(it)
+            },
+            // This new click on the info icon opens the details dialog
+            onInfoClick = {
+                showCategoryDetailsDialog(it)
             }
         )
         categoriesRecyclerView.apply {
@@ -111,6 +116,29 @@ class CategoryFragment : Fragment() {
                 showLoading(false)
             }
         }
+    }
+
+    private fun showCategoryDetailsDialog(category: ExerciseCategory) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_category_details, null)
+
+        val nameTextView = dialogView.findViewById<TextView>(R.id.text_view_detail_name)
+        val descTextView = dialogView.findViewById<TextView>(R.id.text_view_detail_desc)
+        val idTextView = dialogView.findViewById<TextView>(R.id.text_view_detail_id)
+        val closeButton = dialogView.findViewById<ImageView>(R.id.image_view_close_dialog)
+
+        nameTextView.text = category.category_name
+        descTextView.text = category.category_description
+        idTextView.text = category.category_id
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        closeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun deleteCategory(category: ExerciseCategory) {
@@ -178,13 +206,16 @@ class CategoryFragment : Fragment() {
         }
         dialog.show()
     }
+
     private fun showEditCategoryDialog(category: ExerciseCategory) {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_category, null)
+
         val titleTextView = dialogView.findViewById<TextView>(R.id.text_view_dialog_title)
         val categoryNameEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_category_name)
         val categoryDescEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_category_description)
         val saveButton = dialogView.findViewById<Button>(R.id.button_save_category)
         val closeButton = dialogView.findViewById<ImageView>(R.id.image_view_close_dialog)
+
         titleTextView.text = "Edit Category"
         categoryNameEditText.setText(category.category_name)
         categoryDescEditText.setText(category.category_description)

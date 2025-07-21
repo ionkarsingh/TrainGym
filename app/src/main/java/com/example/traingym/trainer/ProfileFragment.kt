@@ -25,6 +25,8 @@ class ProfileFragment : Fragment() {
     private lateinit var usernameTextView: TextView
     private lateinit var emailTextView: TextView
     private lateinit var roleTextView: TextView
+    private lateinit var phoneTextView: TextView
+    private lateinit var addressTextView: TextView
     private lateinit var loadingOverlay: ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +41,8 @@ class ProfileFragment : Fragment() {
         usernameTextView = view.findViewById(R.id.text_view_username)
         emailTextView = view.findViewById(R.id.text_view_email)
         roleTextView = view.findViewById(R.id.text_view_role)
+        phoneTextView = view.findViewById(R.id.text_view_phone)
+        addressTextView = view.findViewById(R.id.text_view_address)
         val logoutButton = view.findViewById<Button>(R.id.button_logout)
         loadingOverlay = view.findViewById(R.id.loading_overlay)
 
@@ -75,10 +79,15 @@ class ProfileFragment : Fragment() {
                     val userType = document.getString("user_type")?.replaceFirstChar {
                         if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
                     }
+                    val phone = document.getString("phone")
+                    val address = document.getString("address")
 
                     usernameTextView.text = username
                     emailTextView.text = email
                     roleTextView.text = userType
+                    phoneTextView.text = phone
+                    addressTextView.text = address
+
                 } else {
                     Toast.makeText(context, "User data not found.", Toast.LENGTH_SHORT).show()
                 }

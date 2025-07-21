@@ -27,7 +27,6 @@ class ExercisesListFragment : Fragment() {
     private var categoryId: String? = null
     private var categoryName: String? = null
     private lateinit var firestore: FirebaseFirestore
-
     private lateinit var exercisesRecyclerView: RecyclerView
     private lateinit var exerciseAdapter: ExerciseAdapter
     private lateinit var lottieAnimationView: LottieAnimationView
@@ -47,12 +46,10 @@ class ExercisesListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_exercises_list, container, false)
-
         exercisesRecyclerView = view.findViewById(R.id.exercises_recycler_view)
         lottieAnimationView = view.findViewById(R.id.lottie_loading_animation)
         noExercisesTextView = view.findViewById(R.id.text_view_no_exercises)
         val fab = view.findViewById<FloatingActionButton>(R.id.fab_add_exercise)
-
         fab.setOnClickListener {
             showAddExerciseDialog()
         }

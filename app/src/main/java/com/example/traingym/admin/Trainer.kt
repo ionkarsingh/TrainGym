@@ -11,5 +11,7 @@ data class Trainer(
     @ServerTimestamp
     val addedDate: Date? = null,
     @get:PropertyName("_suspended") @set:PropertyName("_suspended")
-    var isSuspended: Boolean = false
+    var isSuspended: Boolean = false,
+    val phone: String = "",
+    val address: String = ""
 )
