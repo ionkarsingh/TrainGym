@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.delay
 
 class SplashActivity : AppCompatActivity() {
 
@@ -22,12 +23,12 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_splash)
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
-
         CoroutineScope(Dispatchers.Main).launch {
+            delay(2000)
             checkUserStatus()
         }
     }

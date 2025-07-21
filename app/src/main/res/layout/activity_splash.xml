@@ -5,6 +5,44 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/blue_500"
     tools:context=".auth.SplashActivity">
+
+    <ImageView
+        android:id="@+id/image_view_logo"
+        android:layout_width="272dp"
+        android:layout_height="261dp"
+        android:src="@drawable/logo_gym"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@android:color/white" />
+
+    <TextView
+        android:id="@+id/text_view_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="v0.0.1"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/text_view_developed_by"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/text_view_developed_by"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fit Hit Gym Developed by Onkar Singh at O7 Solution"
+        android:textColor="@android:color/white"
+        android:textSize="10sp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

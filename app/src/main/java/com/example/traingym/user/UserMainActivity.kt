@@ -35,7 +35,7 @@ class UserMainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_explore -> {
-                    replaceFragment(UserExploreExercisesFragment(), "Explore Exercises")
+                    replaceFragment(UserExploreExercisesFragment(), "Explore Categories")
                     true
                 }
                 R.id.navigation_bmi -> {
