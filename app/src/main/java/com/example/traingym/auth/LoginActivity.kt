@@ -10,6 +10,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.example.traingym.R
 import com.example.traingym.admin.AdminMainActivity
 import com.example.traingym.trainer.MainActivity
+import com.example.traingym.user.UserMainActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
@@ -103,6 +104,10 @@ class LoginActivity : AppCompatActivity() {
                                 }
                                 "admin" -> {
                                     startActivity(Intent(this@LoginActivity, AdminMainActivity::class.java))
+                                    finish()
+                                }
+                                "normal_user" -> {
+                                    startActivity(Intent(this@LoginActivity, UserMainActivity::class.java))
                                     finish()
                                 }
                                 else -> {

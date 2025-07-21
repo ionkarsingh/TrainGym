@@ -7,5 +7,7 @@ data class Member(
     val batch_start_time: String = "",
     val batch_end_time: String = "",
     val user_type: String = "normal_user",
-    val is_suspended: Boolean = false
+    val is_suspended: Boolean = false,
+    val phone: String = "",
+    val address: String = ""
 )

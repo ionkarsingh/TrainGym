@@ -172,6 +172,8 @@ class MembersFragment : Fragment() {
         val usernameEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_username)
         val emailEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_email)
         val passwordEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_password)
+        val phoneEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_phone)
+        val addressEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_address)
         val startTimeEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_start_time)
         val endTimeEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_end_time)
         val saveButton = dialogView.findViewById<Button>(R.id.button_save_member)
@@ -197,6 +199,8 @@ class MembersFragment : Fragment() {
             val username = usernameEditText.text.toString().trim()
             val email = emailEditText.text.toString().trim()
             val password = passwordEditText.text.toString().trim()
+            val phone = phoneEditText.text.toString().trim()
+            val address = addressEditText.text.toString().trim()
             val startTime = startTimeEditText.text.toString()
             val endTime = endTimeEditText.text.toString()
 
@@ -211,6 +215,18 @@ class MembersFragment : Fragment() {
                 }
                 password.length < 6 -> {
                     passwordEditText.error = "Minimum 6 characters"
+                    return@setOnClickListener
+                }
+                phone.isEmpty() -> {
+                    phoneEditText.error = "Enter phone number"
+                    return@setOnClickListener
+                }
+                address.isEmpty() -> {
+                    addressEditText.error = "Enter address"
+                    return@setOnClickListener
+                }
+                !phone.matches(Regex("^\\d{10}$")) -> {
+                    phoneEditText.error = "Phone number must be exactly 10 digits"
                     return@setOnClickListener
                 }
                 startTime.isEmpty() -> {
@@ -236,7 +252,9 @@ class MembersFragment : Fragment() {
                         email = email,
                         batch_start_time = startTime,
                         batch_end_time = endTime,
-                        is_suspended = false
+                        is_suspended = false,
+                        phone = phone,
+                        address = address
                     )
 
                     firestore.collection("AppUsers").document(uid).set(newUser).await()
@@ -263,12 +281,16 @@ class MembersFragment : Fragment() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_member, null)
 
         val usernameEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_edit_username)
+        val phoneEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_edit_phone)
+        val addressEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_edit_address)
         val startTimeEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_edit_start_time)
         val endTimeEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_edit_end_time)
         val saveButton = dialogView.findViewById<Button>(R.id.button_save_edit_member)
         val closeButton = dialogView.findViewById<ImageView>(R.id.image_view_close_edit_dialog)
 
         usernameEditText.setText(member.username)
+        phoneEditText.setText(member.phone)
+        addressEditText.setText(member.address)
         startTimeEditText.setText(member.batch_start_time)
         endTimeEditText.setText(member.batch_end_time)
 
@@ -290,11 +312,25 @@ class MembersFragment : Fragment() {
 
         saveButton.setOnClickListener {
             val updatedUsername = usernameEditText.text.toString().trim()
+            val updatedPhone = phoneEditText.text.toString().trim()
+            val updatedAddress = addressEditText.text.toString().trim()
             val updatedStart = startTimeEditText.text.toString()
             val updatedEnd = endTimeEditText.text.toString()
 
             if (updatedUsername.isEmpty()) {
                 usernameEditText.error = "Enter username"
+                return@setOnClickListener
+            }
+            if (updatedPhone.isEmpty()) {
+                phoneEditText.error = "Enter phone number"
+                return@setOnClickListener
+            }
+            if (updatedAddress.isEmpty()) {
+                addressEditText.error = "Enter address"
+                return@setOnClickListener
+            }
+            if (!updatedPhone.matches(Regex("^\\d{10}$"))) {
+                phoneEditText.error = "Phone number must be exactly 10 digits"
                 return@setOnClickListener
             }
             if (updatedStart.isEmpty()) {
@@ -308,6 +344,8 @@ class MembersFragment : Fragment() {
 
             val updatedMember = member.copy(
                 username = updatedUsername,
+                phone = updatedPhone,
+                address = updatedAddress,
                 batch_start_time = updatedStart,
                 batch_end_time = updatedEnd
             )

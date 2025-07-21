@@ -61,6 +61,40 @@
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_edit_phone"
+            style="@style/RoundedTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Phone Number"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_edit_username"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_edit_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_edit_address"
+            style="@style/RoundedTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Address"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_edit_phone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_edit_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPostalAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <TextView
             android:id="@+id/batch_timings_edit_header"
             android:layout_width="wrap_content"
@@ -71,7 +105,7 @@
             android:textStyle="bold"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="12dp"
-            app:layout_constraintTop_toBottomOf="@+id/text_input_edit_username"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_edit_address"
             app:layout_constraintStart_toStartOf="parent"
             />
 

@@ -35,6 +35,10 @@
             android:name=".trainer.MainActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".user.UserMainActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
