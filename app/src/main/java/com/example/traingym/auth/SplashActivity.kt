@@ -57,6 +57,7 @@ class SplashActivity : AppCompatActivity() {
                 when (userType) {
                     "trainer" -> navigateTo(MainActivity::class.java)
                     "admin" -> navigateTo(AdminMainActivity::class.java)
+                    "normal_user" -> navigateTo(com.example.traingym.user.UserMainActivity::class.java)
                     else -> {
                         auth.signOut()
                         navigateToLogin()
