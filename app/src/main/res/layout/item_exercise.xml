@@ -85,8 +85,8 @@
 
             <ImageView
                 android:id="@+id/image_view_edit"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Edit Exercise"
                 app:srcCompat="@drawable/ic_edit"
@@ -94,8 +94,8 @@
 
             <ImageView
                 android:id="@+id/image_view_delete"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_marginStart="16dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Delete Exercise"

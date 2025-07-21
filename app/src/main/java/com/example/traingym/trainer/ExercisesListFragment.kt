@@ -22,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class ExercisesListFragment : Fragment() {
+class ExercisesListFragment : Fragment(), ExerciseAdapter.OnExerciseActionsListener {
 
     private var categoryId: String? = null
     private var categoryName: String? = null
@@ -31,6 +31,19 @@ class ExercisesListFragment : Fragment() {
     private lateinit var exerciseAdapter: ExerciseAdapter
     private lateinit var lottieAnimationView: LottieAnimationView
     private lateinit var noExercisesTextView: TextView
+    private var editExerciseDialog: androidx.appcompat.app.AlertDialog? = null
+    private lateinit var nameEditText: TextInputEditText
+    private lateinit var setsEditText: TextInputEditText
+    private lateinit var repsEditText: TextInputEditText
+    private lateinit var restEditText: TextInputEditText
+    private lateinit var muscleEditText: TextInputEditText
+    private lateinit var instructionsEditText: TextInputEditText
+    private lateinit var url1EditText: TextInputEditText
+    private lateinit var url2EditText: TextInputEditText
+    private lateinit var url3EditText: TextInputEditText
+    private lateinit var url4EditText: TextInputEditText
+    private lateinit var saveButton: Button
+    private lateinit var closeButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +68,7 @@ class ExercisesListFragment : Fragment() {
         }
 
         setupRecyclerView()
+        setupEditExerciseDialog()
         return view
     }
 
@@ -75,6 +89,7 @@ class ExercisesListFragment : Fragment() {
 
     private fun setupRecyclerView() {
         exerciseAdapter = ExerciseAdapter(emptyList())
+        exerciseAdapter.setOnExerciseActionsListener(this)
         exercisesRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = exerciseAdapter
@@ -188,6 +203,130 @@ class ExercisesListFragment : Fragment() {
         }
 
         dialog.show()
+    }
+
+    override fun onEditClicked(exercise: Exercise) {
+        showEditExerciseDialog(exercise)
+    }
+
+    override fun onDeleteClicked(exercise: Exercise) {
+        showDeleteConfirmationDialog(exercise)
+    }
+
+    private fun setupEditExerciseDialog() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_exercise, null)
+        nameEditText = dialogView.findViewById(R.id.edit_text_exercise_name)
+        setsEditText = dialogView.findViewById(R.id.edit_text_sets)
+        repsEditText = dialogView.findViewById(R.id.edit_text_reps)
+        restEditText = dialogView.findViewById(R.id.edit_text_rest_time)
+        muscleEditText = dialogView.findViewById(R.id.edit_text_target_muscle)
+        instructionsEditText = dialogView.findViewById(R.id.edit_text_instructions)
+        url1EditText = dialogView.findViewById(R.id.edit_text_image_url1)
+        url2EditText = dialogView.findViewById(R.id.edit_text_image_url2)
+        url3EditText = dialogView.findViewById(R.id.edit_text_image_url3)
+        url4EditText = dialogView.findViewById(R.id.edit_text_image_url4)
+        saveButton = dialogView.findViewById(R.id.button_save_exercise)
+        closeButton = dialogView.findViewById(R.id.image_view_close_dialog)
+
+        editExerciseDialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        closeButton.setOnClickListener { editExerciseDialog?.dismiss() }
+    }
+
+    private fun showEditExerciseDialog(exercise: Exercise) {
+        nameEditText.setText(exercise.name)
+        setsEditText.setText(exercise.sets)
+        repsEditText.setText(exercise.reps)
+        restEditText.setText(exercise.rest_time)
+        muscleEditText.setText(exercise.target_muscle)
+        instructionsEditText.setText(exercise.instructions)
+
+        val imageUrls = exercise.image_urls
+        url1EditText.setText(imageUrls.getOrNull(0) ?: "")
+        url2EditText.setText(imageUrls.getOrNull(1) ?: "")
+        url3EditText.setText(imageUrls.getOrNull(2) ?: "")
+        url4EditText.setText(imageUrls.getOrNull(3) ?: "")
+
+        saveButton.setOnClickListener {
+            val name = nameEditText.text.toString().trim()
+            val sets = setsEditText.text.toString().trim()
+            val reps = repsEditText.text.toString().trim()
+            val restTime = restEditText.text.toString().trim()
+            val targetMuscle = muscleEditText.text.toString().trim()
+            val instructions = instructionsEditText.text.toString().trim()
+
+            if (name.isEmpty()) { nameEditText.error = "Required"; return@setOnClickListener }
+            if (sets.isEmpty()) { setsEditText.error = "Required"; return@setOnClickListener }
+            if (reps.isEmpty()) { repsEditText.error = "Required"; return@setOnClickListener }
+            if (restTime.isEmpty()) { restEditText.error = "Required"; return@setOnClickListener }
+            if (targetMuscle.isEmpty()) { muscleEditText.error = "Required"; return@setOnClickListener }
+            if (instructions.isEmpty()) { instructionsEditText.error = "Required"; return@setOnClickListener }
+
+            val nonEmptyImageUrls = listOfNotNull(
+                url1EditText.text.toString().trim().takeIf { it.isNotBlank() },
+                url2EditText.text.toString().trim().takeIf { it.isNotBlank() },
+                url3EditText.text.toString().trim().takeIf { it.isNotBlank() },
+                url4EditText.text.toString().trim().takeIf { it.isNotBlank() }
+            )
+
+            if (nonEmptyImageUrls.size < 2) {
+                Toast.makeText(context, "Please provide at least two image URLs.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            val updatedExercise = hashMapOf(
+                "name" to name,
+                "sets" to sets,
+                "reps" to reps,
+                "rest_time" to restTime,
+                "target_muscle" to targetMuscle,
+                "instructions" to instructions,
+                "image_urls" to nonEmptyImageUrls
+            )
+
+            lifecycleScope.launch {
+                try {
+                    firestore.collection("Exercises").document(exercise.exercise_id)
+                        .update(updatedExercise as Map<String, Any>).await()
+                    Toast.makeText(context, "Exercise updated successfully!", Toast.LENGTH_SHORT)
+                        .show()
+                    editExerciseDialog?.dismiss()
+                    fetchExercises()
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        context,
+                        "Error updating exercise: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+        editExerciseDialog?.show()
+    }
+
+    private fun showDeleteConfirmationDialog(exercise: Exercise) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Delete Exercise")
+            .setMessage("Are you sure you want to delete this exercise?")
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Delete") { _, _ ->
+                deleteExercise(exercise)
+            }
+            .show()
+    }
+
+    private fun deleteExercise(exercise: Exercise) {
+        lifecycleScope.launch {
+            try {
+                firestore.collection("Exercises").document(exercise.exercise_id).delete().await()
+                Toast.makeText(context, "Exercise deleted successfully", Toast.LENGTH_SHORT).show()
+                fetchExercises()
+            } catch (e: Exception) {
+                Toast.makeText(context, "Error deleting exercise: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     companion object {

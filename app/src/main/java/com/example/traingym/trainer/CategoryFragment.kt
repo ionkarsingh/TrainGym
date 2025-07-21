@@ -61,7 +61,6 @@ class CategoryFragment : Fragment() {
         categoryAdapter = CategoryAdapter(
             emptyList(),
             onItemClick = { clickedCategory ->
-                // This click on the card still goes to the exercises list
                 val exerciseListFragment = ExercisesListFragment.newInstance(
                     clickedCategory.category_id,
                     clickedCategory.category_name
@@ -77,7 +76,6 @@ class CategoryFragment : Fragment() {
             onDeleteClick = {
                 deleteCategory(it)
             },
-            // This new click on the info icon opens the details dialog
             onInfoClick = {
                 showCategoryDetailsDialog(it)
             }
@@ -111,7 +109,6 @@ class CategoryFragment : Fragment() {
                     categoryAdapter.updateData(categories)
                 }
             } catch (e: Exception) {
-                Toast.makeText(context, "Error fetching categories: ${e.message}", Toast.LENGTH_LONG).show()
             } finally {
                 showLoading(false)
             }
