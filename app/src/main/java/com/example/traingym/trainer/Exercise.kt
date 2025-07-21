@@ -1,5 +1,9 @@
 package com.example.traingym.trainer
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Exercise(
     val exercise_id: String = "",
     val category_id: String = "",
@@ -10,4 +14,4 @@ data class Exercise(
     val target_muscle: String = "",
     val instructions: String = "",
     val image_urls: List<String> = emptyList()
-)
+) : Parcelable

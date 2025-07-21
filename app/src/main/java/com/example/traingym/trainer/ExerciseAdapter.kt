@@ -16,14 +16,23 @@ class ExerciseAdapter(
 ) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
     private var listener: OnExerciseActionsListener? = null
+    private var itemClickListener: OnItemClickListener? = null
 
     interface OnExerciseActionsListener {
         fun onEditClicked(exercise: Exercise)
         fun onDeleteClicked(exercise: Exercise)
     }
 
+    interface OnItemClickListener {
+        fun onItemClicked(exercise: Exercise)
+    }
+
     fun setOnExerciseActionsListener(listener: OnExerciseActionsListener) {
         this.listener = listener
+    }
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        this.itemClickListener = listener
     }
 
     class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -63,6 +72,10 @@ class ExerciseAdapter(
                 .into(holder.imageView)
         } else {
             holder.imageView.setImageDrawable(lottieDrawable)
+        }
+
+        holder.itemView.setOnClickListener {
+            itemClickListener?.onItemClicked(exercise)
         }
 
         holder.editButton.setOnClickListener {

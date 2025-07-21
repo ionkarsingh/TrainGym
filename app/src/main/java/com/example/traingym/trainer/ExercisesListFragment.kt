@@ -22,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class ExercisesListFragment : Fragment(), ExerciseAdapter.OnExerciseActionsListener {
+class ExercisesListFragment : Fragment(), ExerciseAdapter.OnExerciseActionsListener, ExerciseAdapter.OnItemClickListener {
 
     private var categoryId: String? = null
     private var categoryName: String? = null
@@ -90,6 +90,7 @@ class ExercisesListFragment : Fragment(), ExerciseAdapter.OnExerciseActionsListe
     private fun setupRecyclerView() {
         exerciseAdapter = ExerciseAdapter(emptyList())
         exerciseAdapter.setOnExerciseActionsListener(this)
+        exerciseAdapter.setOnItemClickListener(this)
         exercisesRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = exerciseAdapter
@@ -211,6 +212,14 @@ class ExercisesListFragment : Fragment(), ExerciseAdapter.OnExerciseActionsListe
 
     override fun onDeleteClicked(exercise: Exercise) {
         showDeleteConfirmationDialog(exercise)
+    }
+
+    override fun onItemClicked(exercise: Exercise) {
+        val fragment = ExercisesDemoFragment.newInstance(exercise)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun setupEditExerciseDialog() {
